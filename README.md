@@ -1,37 +1,38 @@
-.
-🤖 TP-Link Archer MR600 - KPN Auto Refill Bot (Chrome Extension)
-This Chrome Extension automates the "Unlimited Data" refill process for Simcard users and similar providers on the TP-Link Archer MR600 4G+ Router.
+🤖 MR600-Bot v1.0
+Universal SMS Automation for TP-Link Archer MR600
 
-🌟 Features
-Zero-Config Hover Menu: An integrated settings panel directly on the router's web interface (no more pinning extensions).
 
-Automated Monitoring: Scans incoming SMS for "80%" or "100%" data usage warnings.
+MR600-Bot is a lightweight Chrome Extension specifically developed for the TP-Link Archer MR600 4G+ Router. This tool automates repetitive SMS tasks, such as responding to data-limit warnings from service providers or managing remote-triggered commands.
 
-Instant Response: Automatically replies with NL2000 AAN (or your custom command) to 1266.
+🌟 Key Features
 
-Full Storage Wipe: Automatically clears both Inbox and Outbox after 10 refills to prevent SIM storage from clogging.
+⚡ Zero-Config Hover Menu: An integrated settings panel injected directly into the router's web interface. No more pinning extensions or digging through menus.
 
-Persistent Settings: Saves your custom targets and messages in the browser's local storage.
+🔍 Smart Monitoring: Continuously scans incoming SMS messages for specific keywords (e.g., "80%", "100%", or custom triggers).
+
+🚀 Instant Response: Automatically sends a predefined reply to a target number as soon as a trigger is detected.
+
+🧹 Full Storage Wipe: Automatically clears both Inbox and Outbox after a set number of actions (default: 10). This prevents the SIM card storage from filling up and blocking new incoming messages.
+
+💾 Local Storage: Your settings are saved securely and locally within your own browser.
 
 🛠️ Installation
-Download/Clone this repository to your computer.
-Open Google Chrome and go to chrome://extensions/.
-Enable "Developer mode" in the top right corner.
+Download or Clone this repository to your computer.
+Open Google Chrome and navigate to chrome://extensions/.
+Enable "Developer mode" (toggle in the top right corner).
 Click "Load unpacked" and select the folder containing the extension files.
-Navigate to your router (usually http://tplinkmodem.net or 192.168.1.1). >  http://tplinkmodem.net will work best and is the tested and most supported page.
-The MR600 Bot menu will appear automatically on the right side of the screen.
+Log in to your router via http://tplinkmodem.net (this is the most stable and tested entry point).
+The MR600-Bot menu will automatically appear on the right side of your screen.
 
-📦 Files in this repo
-manifest.json: Extension configuration.
-content.js: The "brain" of the bot and the injected UI.
-popup.html/js: (Optional) Quick settings access.
+📦 Repository Structure
+manifest.json: Extension configuration and permissions.
+content.js: The core engine; handles UI injection, SMS scanning, and automation logic.
+popup.html/js: Optional secondary access point for settings via the browser toolbar.
 
-🤝 Credits
-This project was developed in collaboration with a Google AI Assistant. The goal was to overcome the specific DOM-rendering challenges of the TP-Link web interface and provide a user-friendly automation tool for KPN customers.
+🤝 Credits & Support
+This project was developed by dutch_bastard_65756 (discord) in collaboration with a Google AI Assistant. Together, we overcame the specific DOM-rendering and SVG-checkbox challenges of the TP-Link web interface to create a reliable automation tool.
+Bugs or Questions? Contact via Discord: dutch_bastard_65756
 
 ⚠️ Disclaimer
-This script is an unofficial community project and is not affiliated with TP-Link or KPN. Use at your own risk. Always ensure that refill SMS messages are free of charge on your specific plan.
-
-for bugs ore questions contact at discord: dutch_bastard_65756
-
-
+This script is an unofficial community project and is not affiliated with TP-Link or any specific ISP. Use at your own risk. Always verify that automated SMS messages are included in your service plan to avoid unexpected charges.
+Maintained by dutch_bastard_65756

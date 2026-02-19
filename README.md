@@ -1,29 +1,37 @@
-# Archer-MR600-Bot
-A lightweight JavaScript automation script designed to run in the browser console of the TP-Link Archer MR600 (4G+ Router).
+.
+🤖 TP-Link Archer MR600 - KPN Auto Refill Bot (Chrome Extension)
+This Chrome Extension automates the "Unlimited Data" refill process for Simcard users and similar providers on the TP-Link Archer MR600 4G+ Router.
 
+🌟 Features
+Zero-Config Hover Menu: An integrated settings panel directly on the router's web interface (no more pinning extensions).
 
-TP-Link Archer MR600 - KPN Auto Refill Bot 🤖
-A lightweight JavaScript automation script designed to run in the browser console of the TP-Link Archer MR600 (4G+ Router).
+Automated Monitoring: Scans incoming SMS for "80%" or "100%" data usage warnings.
 
+Instant Response: Automatically replies with NL2000 AAN (or your custom command) to 1266.
 
-🚀 Purpose
-This script automates the "Daily Bundle" refill process for KPN Unlimited (and similar providers). It monitors the router's SMS inbox for data usage warnings and automatically sends a reply to refill the data, ensuring an uninterrupted internet connection.
+Full Storage Wipe: Automatically clears both Inbox and Outbox after 10 refills to prevent SIM storage from clogging.
 
-✨ Key Features
-Automated Monitoring: Scans your inbox every 60 seconds for "80%" or "100%" usage alerts.
-Smart Response: Automatically replies with the required activation code (e.g., NL2000 AAN) to 1266.
-SVG Checkbox Fix: Advanced DOM-traversal to interact with the router's custom UI elements (like the tricky SVG checkboxes).
+Persistent Settings: Saves your custom targets and messages in the browser's local storage.
 
-Auto-Cleanup (Wipe): To prevent the SIM/Router storage from filling up, the script triggers a "Select All + Delete" action every 10 sent messages.
-State Persistence: Uses ID-tracking to ensure it only responds once per received alert.
+🛠️ Installation
+Download/Clone this repository to your computer.
+Open Google Chrome and go to chrome://extensions/.
+Enable "Developer mode" in the top right corner.
+Click "Load unpacked" and select the folder containing the extension files.
+Navigate to your router (usually http://tplinkmodem.net or 192.168.1.1).
+The MR600 Bot menu will appear automatically on the right side of the screen.
 
-🛠️ How to use
-Log in to your Archer MR600 web interface.
-Open the Browser Developer Tools (F12 or Right-click -> Inspect).
-Go to the Console tab.
+📦 Files in this repo
+manifest.json: Extension configuration.
+content.js: The "brain" of the bot and the injected UI.
+popup.html/js: (Optional) Quick settings access.
 
-Paste the script and hit Enter.
+🤝 Credits
+This project was developed in collaboration with a Google AI Assistant. The goal was to overcome the specific DOM-rendering challenges of the TP-Link web interface and provide a user-friendly automation tool for KPN customers.
 
-Keep the browser tab open for the script to continue running.
 ⚠️ Disclaimer
-This script is unofficial and not affiliated with TP-Link or KPN. Use at your own risk. Ensure you are on a plan where the refill SMS is free of charge to avoid unexpected costs.
+This script is an unofficial community project and is not affiliated with TP-Link or KPN. Use at your own risk. Always ensure that refill SMS messages are free of charge on your specific plan.
+
+
+
+

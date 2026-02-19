@@ -1,6 +1,6 @@
-// --- 🤖 MR600-Bot v1.0 (Universal SMS Automation) ---
+// --- 🤖 MR600-Bot v1.1 (Universal SMS Automation) ---
 
-// 1. Kernconfiguratie (Neutrale defaults)
+// 1. Core Configuration
 let CONFIG = {
     targets: ["80%", "100%"],
     replyNum: "1266",
@@ -17,18 +17,18 @@ function log(msg) {
     console.log(`[MR600-BOT] ${new Date().toLocaleTimeString()}: ${msg}`);
 }
 
-// 2. Instellingen laden
+// 2. Load Settings
 function loadSettings() {
     const saved = localStorage.getItem('mr600_config');
     if (saved) {
         try {
             const parsed = JSON.parse(saved);
             CONFIG = {...CONFIG, ...parsed};
-        } catch(e) { log("Fout bij laden config: " + e); }
+        } catch(e) { log("Error loading config: " + e); }
     }
 }
 
-// 3. De Universele Hover UI injecteren
+// 3. Inject Universal Hover UI
 function injectInterface() {
     if (document.getElementById('mr600-ui-box')) return;
     loadSettings();
@@ -38,13 +38,13 @@ function injectInterface() {
     ui.innerHTML = `
         <div style="position:fixed; top:70px; right:20px; z-index:9999; background:white; border:2px solid #00a1e1; padding:15px; border-radius:8px; box-shadow:0 4px 15px rgba(0,0,0,0.3); width:220px; font-family:Arial; color:#333;">
             <h4 style="margin:0 0 10px 0; color:#00a1e1; display:flex; align-items:center; gap:8px;">
-                <span style="font-size:20px;">🤖</span> MR600-Bot v1.0
+                <span style="font-size:20px;">🤖</span> MR600-Bot v1.1
             </h4>
             
-            <label style="font-size:11px; font-weight:bold;">Trigger tekst (comma sep.):</label>
+            <label style="font-size:11px; font-weight:bold;">Scan for text (comma-sep.):</label>
             <input type="text" id="ui-targets" value="${Array.isArray(CONFIG.targets) ? CONFIG.targets.join(', ') : CONFIG.targets}" style="width:100%; margin:5px 0 10px 0; padding:4px; border:1px solid #ccc; border-radius:4px;">
             
-            <label style="font-size:11px; font-weight:bold;">Antwoord naar & bericht:</label>
+            <label style="font-size:11px; font-weight:bold;">Reply to & Message:</label>
             <input type="text" id="ui-num" value="${CONFIG.replyNum}" style="width:100%; margin:5px 0 5px 0; padding:4px; border:1px solid #ccc; border-radius:4px;">
             <input type="text" id="ui-msg" value="${CONFIG.replyMsg}" style="width:100%; margin:0 0 10px 0; padding:4px; border:1px solid #ccc; border-radius:4px;">
             
@@ -74,7 +74,7 @@ function injectInterface() {
     };
 }
 
-// --- ⚙️ Kernfunctionaliteit ---
+// --- ⚙️ Core Functionality ---
 
 function klikMenuText(txt) {
     const spans = Array.from(document.querySelectorAll('span.text.T'));
@@ -88,6 +88,7 @@ function klikMenuText(txt) {
 
 function startRobot() {
     loadSettings();
+    injectInterface();
     log(`Monitoring Archer UI...`);
 
     const advancedTab = document.querySelector('#advanced');
@@ -179,18 +180,10 @@ function verstuurSms(berichtID) {
 async function startGroteSchoonmaak() {
     log("🗑️ Starting full storage wipe...");
     smsVerstuurdTeller = 0; 
-    
-    // Eerst de Inbox
     const inboxSuccess = await leegMap("Inbox");
-    if (!inboxSuccess) log("⚠️ Could not clean Inbox, moving to Outbox...");
-    
-    // Wacht even extra lang tussen mappen
     setTimeout(async () => {
-        const outboxSuccess = await leegMap("Outbox");
-        if (outboxSuccess) {
-            log("✅ Storage is now clean.");
-        }
-        // Altijd terug naar de Inbox als hoofdscherm
+        await leegMap("Outbox");
+        log("✅ Storage is now clean.");
         setTimeout(() => klikMenuText("Inbox"), 3000);
     }, 15000); 
 }
@@ -198,60 +191,29 @@ async function startGroteSchoonmaak() {
 function leegMap(mapNaam) {
     return new Promise((resolve) => {
         log(`Cleaning: ${mapNaam}...`);
-        if (!klikMenuText(mapNaam)) {
-            resolve(false);
-            return;
-        }
+        if (!klikMenuText(mapNaam)) { resolve(false); return; }
 
-        // Wacht tot de tabel geladen is
         setTimeout(() => {
-            // Zoek de 'Select All' checkbox (verschillende mogelijke selectors)
             const allCheckbox = document.querySelector('th .tp-checkbox-wrapper') || 
-                               document.querySelector('th input[type="checkbox"]') ||
-                               document.querySelector('th .checkbox-label');
-            
-            // Zoek de 'Delete' knop
+                               document.querySelector('th input[type="checkbox"]');
             const deleteBtn = document.querySelector('#staticDelete') || 
-                              Array.from(document.querySelectorAll('label.table-icon-text, button')).find(el => el.innerText.trim().toLowerCase() === "delete");
+                              Array.from(document.querySelectorAll('label.table-icon-text')).find(el => el.innerText.trim() === "Delete");
 
             if (allCheckbox && deleteBtn) {
-                log("Selecting all messages...");
                 allCheckbox.click();
-                
                 setTimeout(() => {
-                    log("Clicking delete button...");
                     deleteBtn.click();
-                    
-                    // Wacht op de TP-Link bevestigings-popup (OK knop)
                     setTimeout(() => {
                         const okBtn = document.querySelector('.tp-msgbox-ok') || 
-                                     document.querySelector('.button-confirm') ||
-                                     Array.from(document.querySelectorAll('.button-text, button')).find(el => el.innerText.trim() === "OK" || el.innerText.trim() === "Yes");
-                        
-                        if (okBtn) {
-                            log("Confirming deletion...");
-                            okBtn.click();
-                            resolve(true);
-                        } else {
-                            log("❌ Confirmation button not found.");
-                            resolve(false);
-                        }
+                                     Array.from(document.querySelectorAll('.button-text')).find(el => el.innerText.trim() === "OK");
+                        if (okBtn) okBtn.click();
+                        resolve(true);
                     }, 3000);
                 }, 2000);
-            } else {
-                log(`No messages found or buttons missing in ${mapNaam}.`);
-                resolve(false);
-            }
-        }, 5000); // Geef de tabel 5 seconden om te laden
+            } else { resolve(false); }
+        }, 5000);
     });
 }
 
-// 🚀 Start Sequence
-setTimeout(() => {
-    loadSettings();
-    injectInterface();
-    startRobot();
-}, 4000);
-
-setInterval(startRobot, CONFIG.checkInterval);
-
+// Kickstart
+setTimeout(startRobot, 3000);

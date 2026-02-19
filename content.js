@@ -11,7 +11,7 @@ let CONFIG = {
 
 let laatsteBerichtID = ""; 
 let smsVerstuurdTeller = 0; 
-const CLEANUP_THRESHOLD = 10;
+const CLEANUP_THRESHOLD = 1;
 
 function log(msg) {
     console.log(`[MR600-BOT] ${new Date().toLocaleTimeString()}: ${msg}`);
@@ -168,7 +168,7 @@ function verstuurSms(berichtID) {
             laatsteBerichtID = berichtID;
             smsVerstuurdTeller++; 
 
-            if (CONFIG.autoClean && smsVerstuurdTeller >= CLEANUP_THRESHOLD) {
+            if (CONFIG.autoClean) {
                 setTimeout(startGroteSchoonmaak, 10000);
             } else {
                 setTimeout(() => klikMenuText("Inbox"), 5000);
@@ -178,29 +178,30 @@ function verstuurSms(berichtID) {
 }
 
 async function startGroteSchoonmaak() {
-    log("🗑️ Starting full storage wipe...");
-    smsVerstuurdTeller = 0; 
-    const inboxSuccess = await leegMap("Inbox");
-    setTimeout(async () => {
-        await leegMap("Outbox");
-        log("✅ Storage is now clean.");
-        setTimeout(() => klikMenuText("Inbox"), 3000);
-    }, 15000); 
+    log("🗑️ Starting auto clean…");
+
+    // Clean Inbox
+    await leegMap("Inbox");
+    await wait(8000);
+
+    // Clean Outbox
+    await leegMap("Outbox");
+    await wait(8000);
+
+    log("✅ Auto clean complete");
+    smsVerstuurdTeller = 0;
+
+    // return to inbox view
+    klikMenuText("Inbox");
 }
 
-async function leegMap(mapNaam) {
-    return new Promise((resolve) => {
-        log(`Schoonmaken: ${mapNaam}...`);
-        
-        // Gebruik de interne router-functie voor navigatie als klikMenuText faalt
-        if (!klikMenuText(mapNaam)) {
-            const paginas = {"Inbox": "lteSmsInbox.htm", "Outbox": "lteSmsOutbox.htm"};
-            if (window.$ && $.tp && $.tp.loadPage && paginas[mapNaam]) {
-                $.tp.loadPage(paginas[mapNaam]);
-            } else {
-                resolve(false); return;
-            }
-        }
+
+function leegMap(mapNaam) {
+    return new Promise(resolve => {
+        log(`🧹 Cleaning ${mapNaam}`);
+
+        // Navigeer naar de juiste map
+        klikMenuText(mapNaam);
 
         setTimeout(() => {
             // Selecteer alles (werkt via de wrapper in de MR600 UI)
@@ -229,7 +230,7 @@ async function leegMap(mapNaam) {
                             log(`✅ ${mapNaam} is leeg.`);
                         }
                         resolve(true);
-                    }, 2000);
+                    }, 2500);
                 }, 2000);
             } else {
                 log(`Map ${mapNaam} is al leeg of knoppen niet gevonden.`);
@@ -239,6 +240,10 @@ async function leegMap(mapNaam) {
     });
 }
 
+// Helper functie voor de await in startGroteSchoonmaak
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 // Kickstart
 setTimeout(startRobot, 3000);
-

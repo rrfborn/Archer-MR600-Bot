@@ -188,32 +188,57 @@ async function startGroteSchoonmaak() {
     }, 15000); 
 }
 
-function leegMap(mapNaam) {
+async function leegMap(mapNaam) {
     return new Promise((resolve) => {
-        log(`Cleaning: ${mapNaam}...`);
-        if (!klikMenuText(mapNaam)) { resolve(false); return; }
+        log(`Schoonmaken: ${mapNaam}...`);
+        
+        // Gebruik de interne router-functie voor navigatie als klikMenuText faalt
+        if (!klikMenuText(mapNaam)) {
+            const paginas = {"Inbox": "lteSmsInbox.htm", "Outbox": "lteSmsOutbox.htm"};
+            if (window.$ && $.tp && $.tp.loadPage && paginas[mapNaam]) {
+                $.tp.loadPage(paginas[mapNaam]);
+            } else {
+                resolve(false); return;
+            }
+        }
 
         setTimeout(() => {
+            // Selecteer alles (werkt via de wrapper in de MR600 UI)
             const allCheckbox = document.querySelector('th .tp-checkbox-wrapper') || 
-                               document.querySelector('th input[type="checkbox"]');
-            const deleteBtn = document.querySelector('#staticDelete') || 
-                              Array.from(document.querySelectorAll('label.table-icon-text')).find(el => el.innerText.trim() === "Delete");
+                               document.querySelector('th .checkbox-click');
+            
+            const deleteBtn = document.getElementById('staticDel') || 
+                              document.querySelector('#staticDelete') ||
+                              Array.from(document.querySelectorAll('label.table-icon-text')).find(el => el.innerText.includes("Delete"));
 
             if (allCheckbox && deleteBtn) {
                 allCheckbox.click();
+                
                 setTimeout(() => {
                     deleteBtn.click();
+                    log("Wachten op bevestigings-popup...");
+
+                    // Bevestig de verwijdering in de pop-up
                     setTimeout(() => {
                         const okBtn = document.querySelector('.tp-msgbox-ok') || 
-                                     Array.from(document.querySelectorAll('.button-text')).find(el => el.innerText.trim() === "OK");
-                        if (okBtn) okBtn.click();
+                                     document.querySelector('.button-ok') ||
+                                     Array.from(document.querySelectorAll('button')).find(b => b.innerText.includes("OK"));
+                        
+                        if (okBtn) {
+                            okBtn.click();
+                            log(`✅ ${mapNaam} is leeg.`);
+                        }
                         resolve(true);
-                    }, 3000);
+                    }, 2000);
                 }, 2000);
-            } else { resolve(false); }
-        }, 5000);
+            } else {
+                log(`Map ${mapNaam} is al leeg of knoppen niet gevonden.`);
+                resolve(false);
+            }
+        }, 6000); // Ruime tijd om de tabel te laden
     });
 }
 
 // Kickstart
 setTimeout(startRobot, 3000);
+

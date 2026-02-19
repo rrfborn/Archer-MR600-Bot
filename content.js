@@ -179,39 +179,70 @@ function verstuurSms(berichtID) {
 async function startGroteSchoonmaak() {
     log("🗑️ Starting full storage wipe...");
     smsVerstuurdTeller = 0; 
-    await leegMap("Inbox");
+    
+    // Eerst de Inbox
+    const inboxSuccess = await leegMap("Inbox");
+    if (!inboxSuccess) log("⚠️ Could not clean Inbox, moving to Outbox...");
+    
+    // Wacht even extra lang tussen mappen
     setTimeout(async () => {
-        await leegMap("Outbox");
-        log("✅ Storage is now clean.");
+        const outboxSuccess = await leegMap("Outbox");
+        if (outboxSuccess) {
+            log("✅ Storage is now clean.");
+        }
+        // Altijd terug naar de Inbox als hoofdscherm
         setTimeout(() => klikMenuText("Inbox"), 3000);
-    }, 12000); 
+    }, 15000); 
 }
 
 function leegMap(mapNaam) {
     return new Promise((resolve) => {
         log(`Cleaning: ${mapNaam}...`);
-        klikMenuText(mapNaam);
+        if (!klikMenuText(mapNaam)) {
+            resolve(false);
+            return;
+        }
+
+        // Wacht tot de tabel geladen is
         setTimeout(() => {
+            // Zoek de 'Select All' checkbox (verschillende mogelijke selectors)
             const allCheckbox = document.querySelector('th .tp-checkbox-wrapper') || 
-                               document.querySelector('th rect.checkboxColor')?.closest('span');
+                               document.querySelector('th input[type="checkbox"]') ||
+                               document.querySelector('th .checkbox-label');
+            
+            // Zoek de 'Delete' knop
             const deleteBtn = document.querySelector('#staticDelete') || 
-                              Array.from(document.querySelectorAll('label.table-icon-text')).find(el => el.innerText.trim() === "Delete");
+                              Array.from(document.querySelectorAll('label.table-icon-text, button')).find(el => el.innerText.trim().toLowerCase() === "delete");
 
             if (allCheckbox && deleteBtn) {
+                log("Selecting all messages...");
                 allCheckbox.click();
+                
                 setTimeout(() => {
+                    log("Clicking delete button...");
                     deleteBtn.click();
+                    
+                    // Wacht op de TP-Link bevestigings-popup (OK knop)
                     setTimeout(() => {
                         const okBtn = document.querySelector('.tp-msgbox-ok') || 
-                                     Array.from(document.querySelectorAll('span')).find(s => s.innerText.trim() === "OK");
-                        if (okBtn) okBtn.click();
-                        resolve();
-                    }, 2500);
-                }, 1500);
+                                     document.querySelector('.button-confirm') ||
+                                     Array.from(document.querySelectorAll('.button-text, button')).find(el => el.innerText.trim() === "OK" || el.innerText.trim() === "Yes");
+                        
+                        if (okBtn) {
+                            log("Confirming deletion...");
+                            okBtn.click();
+                            resolve(true);
+                        } else {
+                            log("❌ Confirmation button not found.");
+                            resolve(false);
+                        }
+                    }, 3000);
+                }, 2000);
             } else {
-                resolve();
+                log(`No messages found or buttons missing in ${mapNaam}.`);
+                resolve(false);
             }
-        }, 6000);
+        }, 5000); // Geef de tabel 5 seconden om te laden
     });
 }
 
@@ -223,3 +254,4 @@ setTimeout(() => {
 }, 4000);
 
 setInterval(startRobot, CONFIG.checkInterval);
+

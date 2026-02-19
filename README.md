@@ -18,7 +18,7 @@ Download/Clone this repository to your computer.
 Open Google Chrome and go to chrome://extensions/.
 Enable "Developer mode" in the top right corner.
 Click "Load unpacked" and select the folder containing the extension files.
-Navigate to your router (usually http://tplinkmodem.net or 192.168.1.1).
+Navigate to your router (usually http://tplinkmodem.net or 192.168.1.1). >  http://tplinkmodem.net will work best and is the tested and most supported page.
 The MR600 Bot menu will appear automatically on the right side of the screen.
 
 📦 Files in this repo
@@ -32,6 +32,6 @@ This project was developed in collaboration with a Google AI Assistant. The goal
 ⚠️ Disclaimer
 This script is an unofficial community project and is not affiliated with TP-Link or KPN. Use at your own risk. Always ensure that refill SMS messages are free of charge on your specific plan.
 
-
+for bugs ore questions contact at discord: dutch_bastard_65756
 
 

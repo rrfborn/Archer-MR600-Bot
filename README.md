@@ -35,4 +35,4 @@ Bugs or Questions? Contact via Discord: dutch_bastard_65756
 
 ⚠️ Disclaimer
 This script is an unofficial community project and is not affiliated with TP-Link or any specific ISP. Use at your own risk. Always verify that automated SMS messages are included in your service plan to avoid unexpected charges.
-Maintained by dutch_bastard_65756
+Maintained by dutch_bastard_65756 (discord for info and questions)

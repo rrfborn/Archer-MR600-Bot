@@ -3,14 +3,30 @@
   "name": "MR600-Bot",
   "version": "1.0",
   "description": "Universal SMS Automation for Archer MR600",
-  "permissions": ["storage"],
+  "permissions": ["storage", "activeTab"],
   "host_permissions": [
     "*://192.168.1.1/*",
     "*://tplinkmodem.net/*"
   ],
-  "action": {
-    "default_popup": "popup.html"
+  "background": {
+    "service_worker": "background.js"
   },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon48.png"
+  },
+  "author": "MR600 Bot",
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "icons/*",
+        "saved_resource.html",
+        "inject.css"
+      ],
+      "matches": ["*://192.168.1.1/*", "*://tplinkmodem.net/*"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["*://192.168.1.1/*", "*://tplinkmodem.net/*"],

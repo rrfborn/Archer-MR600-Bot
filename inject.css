@@ -1,0 +1,3 @@
+/* inject.css - optional styles for MR600-Bot injected UI */
+#mr600-ui-box { font-family: Arial, sans-serif; }
+#mr600-ui-toggle { -webkit-tap-highlight-color: transparent; }

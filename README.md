@@ -1,6 +1,6 @@
 🤖 MR600-Bot v1.0
 Universal SMS Automation for TP-Link Archer MR600
-(dutch version has a cleaning bug, it will not auto clean)
+
 
 MR600-Bot is a lightweight Chrome Extension specifically developed for the TP-Link Archer MR600 4G+ Router. This tool automates repetitive SMS tasks, such as responding to data-limit warnings from service providers or managing remote-triggered commands.
 
